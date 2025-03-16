@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="image/png" sizes="16x16" rel="icon" href="img/icon_16.png">
+    <link type="image/png" sizes="32x32" rel="icon" href="img/icon_32.png">
+    <link type="image/png" sizes="96x96" rel="icon" href="img/icon_96.png">
+    <link type="image/png" sizes="120x120" rel="icon" href="img/icon_120.png">
+    <title>Panel Sterowania MC</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="header">
+        <h1>Panel Sterowania MC</h1>
+    </div>
+    <div class="main">
+        <div class="sidebar">
+            <div class="add-server">
+                <input type="text" id="serverName" placeholder="Nazwa serwera">
+                <button id="addServerBtn">Dodaj Serwer</button>
+            </div>
+            <div class="server-list" id="serversList"></div>
+            <div class="context-menu" id="serverContext" style="display: none;"></div>
+        </div>
+        <div class="content" id="serverContent" style="display: none;">
+            <div class="server-header">
+                <div style="display: flex; align-items: center;">
+                    <img id="serverIcon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==" alt="Server Icon">
+                    <h2 id="currentServer"></h2>
+                </div>
+                <div class="controls">
+                    <button id="startBtn">Włącz</button>
+                    <button id="stopBtn" disabled>Zatrzymaj</button>
+                    <button id="restartBtn" disabled>Restartuj</button>
+                    <button id="killBtn" disabled>Zabij</button>
+                    <button id="deleteBtn">Usuń</button>
+                </div>
+            </div>
+            <div class="tabs">
+                <div class="tab active" data-tab="console">📟 Konsola</div>
+                <div class="tab" data-tab="logs">📜 Logi</div>
+                <div class="tab" data-tab="java">☕ Java</div>
+                <div class="tab" data-tab="server">⚙️ Ustawienia serwera</div>
+                <div class="tab" id="modsTab" data-tab="mods" style="display: none;">🛠️ Modyfikacje</div>
+                <div class="tab" data-tab="files">📁 Zarządzaj plikami</div>
+                <div class="tab" data-tab="whitelist">📜 Biała Lista</div>
+                <div class="tab" data-tab="ops">👑 Operatorzy</div>
+                <div class="tab" data-tab="banned">🚫 Zbanowani</div>
+                <div class="tab" data-tab="settings">🖌️ Ustawienia</div>
+            </div>
+            <div class="tab-content active" id="consoleTab">
+                <div class="console" id="console"></div>
+                <div class="console-input">
+                    <input type="text" id="consoleInput" placeholder="Wpisz komendę...">
+                    <button id="sendCommandBtn">Wyślij</button>
+                    <button id="clearConsoleBtn">Wyczyść</button>
+                </div>
+            </div>
+            <div class="tab-content" id="logsTab">
+                <select class="log-select" id="logSelect">
+                    <option value="latest.log">latest.log</option>
+                </select>
+                <div class="logs" id="logs"></div>
+            </div>
+            <div class="tab-content" id="settingsTab">
+                <div class="section">
+                    <h3>Ogólne</h3>
+                    <div class="properties-editor">
+                        <div>
+                            <label>Nazwa serwera:
+                                <input type="text" id="serverNameEdit">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3>Wygląd</h3>
+                    <div class="properties-editor">
+                        <div>
+                            <label>Ikona serwera:
+                                <input type="file" accept=".png" id="iconUpload">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content" id="serverTab">
+                <div class="properties-editor" id="properties"></div>
+            </div>
+            <div class="tab-content" id="bannedTab">
+                <h3>Zbanowani Gracze</h3>
+                <div id="bannedPlayers"></div>
+                <h3>Zbanowane IP</h3>
+                <div id="bannedIps"></div>
+            </div>
+            <div class="tab-content" id="whitelistTab">
+                <div id="whitelist"></div>
+            </div>
+            <div class="tab-content" id="opsTab">
+                <div id="ops"></div>
+            </div>
+            <div class="tab-content" id="modsTab">
+                <input type="text" id="modSearch" placeholder="Szukaj moda...">
+                <input type="file" accept=".jar" id="modUpload">
+                <div class="mods-list" id="modsList"></div>
+            </div>
+            <div class="tab-content" id="javaTab">
+                <div class="section">
+                    <h3>Wersja Javy</h3>
+                    <div class="java-panel" id="javaVersionPanel"></div>
+                </div>
+                <div class="section">
+                    <h3>Ustawienia zasobów</h3>
+                    <div class="java-panel" id="javaResourcesPanel"></div>
+                </div>
+                <div class="section">
+                    <h3>Plik serwera</h3>
+                    <div class="java-panel" id="javaJarPanel">
+                        <input type="file" accept=".jar" id="jarUpload">
+                        <span id="currentJar">Nie wybrano pliku.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content" id="filesTab">
+                <div class="file-manager">
+                    <div class="files" id="fileList"></div>
+                    <div class="context-menu" id="fileContext" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="entryModal">
+        <div class="modal-content">
+            <h3 id="modalTitle"></h3>
+            <input type="text" id="modalInput" placeholder="Wprowadź wartość">
+            <div>
+                <button id="submitModalBtn">Dodaj</button>
+                <button id="closeModalBtn">Anuluj</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Podpinanie modułów JS -->
+    <script src="js/main.js" type="module"></script>
+    <script src="js/websocket.js" type="module"></script>
+    <script src="js/ui.js" type="module"></script>
+    <script src="js/server.js" type="module"></script>
+    <script src="js/files.js" type="module"></script>
+    <script src="js/mods.js" type="module"></script>
+    <script src="js/settings.js" type="module"></script>
+    <script src="js/java.js" type="module"></script>
+</body>
+</html>
